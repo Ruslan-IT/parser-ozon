@@ -18,7 +18,21 @@ class ParserItemResource extends Resource
 {
     protected static ?string $model = ParserItem::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::DevicePhoneMobile;
+
+
+
+    // 🔹 Название в боковом меню
+    protected static ?string $navigationLabel = 'Список телефонов';
+
+    // 🔹 Название в верхнем заголовке страницы
+    protected static ?string $modelLabel = 'Список телефонов';
+
+    // 🔹 Множественное число (например, в хлебных крошках)
+    protected static ?string $pluralModelLabel = 'Список телефонов';
+
+
+
 
     protected static ?string $recordTitleAttribute = 'no';
 

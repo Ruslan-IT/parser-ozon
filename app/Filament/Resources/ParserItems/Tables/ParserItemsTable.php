@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\ParserItems\Tables;
 
+use App\Models\ParserItem;
+use App\Models\Product;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextInputColumn;
@@ -19,6 +22,7 @@ class ParserItemsTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Марка')
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
@@ -31,11 +35,60 @@ class ParserItemsTable
                     //->textarea() // делает поле многострочным
                     //->maxLength(500) // максимальная длина текста
 
-                TextInputColumn::make('price')
+                TextColumn::make('price')
                     ->label('Цена')
                     //->numeric()
                     ->sortable(),
             ])
+
+            ->headerActions([
+                Action::make('runAllParsers')
+                    ->label('Запустить парсер для всех моделей')
+                    ->icon('heroicon-o-bolt')
+                    ->color('primary')
+                    ->requiresConfirmation()
+                    ->action(function () {
+
+                        $items = ParserItem::all(); // все модели
+
+                        foreach ($items as $item) {
+
+                            $response = Http::timeout(60)->post('http://127.0.0.1:5001/run-parser', [
+                                'query' => $item->name,
+                                'max_items' => 20,
+                            ]);
+
+                            if ($response->failed()) {
+                                Notification::make()
+                                    ->title("Ошибка при парсинге: {$item->name}")
+                                    ->danger()
+                                    ->send();
+                                continue;
+                            }
+
+                            // пример сохранения
+                            $data = $response->json();
+
+                            //dd($data);
+
+                            foreach ($data['products'] as $i) {
+
+                                Product::create([
+                                    'title' => $i['title'] ?? null,
+                                    'url'   => $i['url'] ?? null,
+                                    'price' => $i['price'] ?? null,
+                                    'delivery' => $i['delivery'] ?? null,
+                                ]);
+                            }
+                        }
+
+                        Notification::make()
+                            ->title('Парсинг всех моделей завершён!')
+                            ->success()
+                            ->send();
+                    }),
+            ])
+
             ->filters([
                 //
             ])

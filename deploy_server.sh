@@ -20,3 +20,6 @@ echo "✅ Кэш почистили обновлён"
 
 
 # запуск команды sh deploy_server.sh
+
+
+https://www.ozon.ru/category/smartfony-15502/samsung-24565087/?brand_was_predicted=true&category_was_predicted=true&deny_category_prediction=true&from_global=true&text=samsung+galaxy+A26+8%2F256
