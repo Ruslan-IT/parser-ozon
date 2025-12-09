@@ -53,7 +53,7 @@ class ParserItemsTable
 
                         foreach ($items as $item) {
 
-                            $response = Http::timeout(60)->post('http://127.0.0.1:5001/run-parser', [
+                            $response = Http::timeout(60)->post('http://127.0.0.1:5001/run-parser2', [
                                 'query' => $item->name,
                                 'max_items' => 20,
                             ]);
