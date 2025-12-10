@@ -59,7 +59,7 @@ class ParserItemsTable
                                 'price_min' => $item->price,
                             ]);
 
-                            $minPrice = floatval(preg_replace('/[^\d.]/', '', $item->price));
+                            $minPrice = (int) floatval(preg_replace('/[^\d]/', '', $item->price));
 
                             if ($response->failed()) {
                                 Notification::make()
@@ -75,6 +75,8 @@ class ParserItemsTable
                             dd($minPrice);
 
                             foreach ($data['products'] as $i) {
+
+                                dd($minPrice);
 
                                 Product::create([
                                     'title' => $i['title'] ?? null,
