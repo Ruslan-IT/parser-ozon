@@ -92,46 +92,7 @@ class ParserItemsTable
             ->filters([
                 //
             ])
-            ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
 
-                Action::make('sendToTelegram')
-                    ->label('Отправить в Telegram')
-                    ->icon('heroicon-o-paper-airplane')
-                    ->color('success')
-                    ->action(function (\App\Models\ParserItem $record) {
-
-                        $token = env('TELEGRAM_BOT_TOKEN');
-
-                        // Добавляем несколько ID
-                        $chatIds = [
-                            env('TELEGRAM_CHAT_ID'), // первый (из .env)
-                            5985008383,              // второй пользователь
-                            1951908603,              // второй пользователь
-
-                            // добавляй сюда ещё ID по желанию
-                        ];
-
-                        $text = "📦 *Новый товар:*\n"
-                            . "Название: {$record->name}\n"
-                            . "Цена: {$record->price}\n"
-                            . "Ссылка: {$record->url}";
-
-                        foreach ($chatIds as $chatId) {
-                            Http::post("https://api.telegram.org/bot{$token}/sendMessage", [
-                                'chat_id' => $chatId,
-                                'text' => $text,
-                            ]);
-                        }
-                    })
-                    ->requiresConfirmation()
-                    ->modalHeading('Отправить товар в Telegram?')
-                    ->modalSubheading('Сообщение будет отправлено всем выбранным пользователям.')
-                    ->modalButton('Отправить'),
-
-
-            ])
             ->bulkActions([
                 DeleteBulkAction::make(),
             ])
