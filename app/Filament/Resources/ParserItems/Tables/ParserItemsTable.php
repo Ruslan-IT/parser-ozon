@@ -56,6 +56,7 @@ class ParserItemsTable
                             $response = Http::timeout(60)->post('http://155.212.219.85:5001/run-parser', [
                                 'query' => $item->name,
                                 'max_items' => 20,
+                                'price_min' => $item->price,
                             ]);
 
                             if ($response->failed()) {
