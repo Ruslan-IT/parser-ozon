@@ -59,7 +59,7 @@ class ParserItemsTable
                                 'price_min' => $item->price,
                             ]);
 
-                            $minPrice = floatval(preg_replace('/[^\d.]/', '', $item->price));
+                            $minPrice = intval(preg_replace('/[^\d.]/', '', $item->price));
 
                             if ($response->failed()) {
                                 Notification::make()
@@ -72,7 +72,7 @@ class ParserItemsTable
                             // пример сохранения
                             $data = $response->json();
 
-                            //dd($minPrice);
+                            dd($minPrice);
 
                             foreach ($data['products'] as $i) {
 
