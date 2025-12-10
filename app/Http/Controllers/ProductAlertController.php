@@ -41,7 +41,7 @@ class ProductAlertController extends Controller
 
 
             // чтобы больше не отправлять второй раз
-            //$product->sent_alert = true;
+            $product->sent_alert = true;
             $product->save();
         }
 
