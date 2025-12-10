@@ -72,7 +72,7 @@ class ParserItemsTable
                             // пример сохранения
                             $data = $response->json();
 
-                            //dd($item->price);
+                            dd($minPrice);
 
                             foreach ($data['products'] as $i) {
 
