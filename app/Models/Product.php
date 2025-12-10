@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['title', 'url', 'price', 'delivery'];
+    protected $fillable = ['title', 'url', 'price', 'delivery', 'sent_alert'];
 
     // Мутатор для автоматической очистки при установке цены
     public function setPriceAttribute($value)
