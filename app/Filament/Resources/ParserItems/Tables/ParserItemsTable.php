@@ -59,6 +59,8 @@ class ParserItemsTable
                                 'price_min' => $item->price,
                             ]);
 
+                            $minPrice = floatval(preg_replace('/[^\d.]/', '', $item->price));
+
                             if ($response->failed()) {
                                 Notification::make()
                                     ->title("Ошибка при парсинге: {$item->name}")
@@ -78,7 +80,7 @@ class ParserItemsTable
                                     'title' => $i['title'] ?? null,
                                     'url'   => $i['url'] ?? null,
                                     'price' => $i['price'] ?? null,
-                                    'min_price' => floatval(preg_replace('/[^\d.]/', '', $item->price)),
+                                    'min_price' => $minPrice,
                                     'delivery' => $i['delivery'] ?? null,
                                     'sent_alert' => 0,
                                 ]);
