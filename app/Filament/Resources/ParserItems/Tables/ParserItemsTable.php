@@ -72,9 +72,12 @@ class ParserItemsTable
                             // пример сохранения
                             $data = $response->json();
 
-                            dd($minPrice);
+                           
 
                             foreach ($data['products'] as $i) {
+
+                                dd($minPrice);
+
 
                                 Product::create([
                                     'title' => $i['title'] ?? null,
