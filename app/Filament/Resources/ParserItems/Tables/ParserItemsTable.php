@@ -70,7 +70,7 @@ class ParserItemsTable
                             // пример сохранения
                             $data = $response->json();
 
-                           
+                            //dd($item->price);
 
                             foreach ($data['products'] as $i) {
 
@@ -78,7 +78,7 @@ class ParserItemsTable
                                     'title' => $i['title'] ?? null,
                                     'url'   => $i['url'] ?? null,
                                     'price' => $i['price'] ?? null,
-                                    'min_price' =>  $item->price,
+                                    'min_price' => floatval(preg_replace('/[^\d.]/', '', $item->price)),
                                     'delivery' => $i['delivery'] ?? null,
                                     'sent_alert' => 0,
                                 ]);
