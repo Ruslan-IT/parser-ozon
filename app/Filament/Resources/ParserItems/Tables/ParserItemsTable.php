@@ -37,7 +37,7 @@ class ParserItemsTable
 
                 TextColumn::make('price')
                     ->label('Цена')
-                    ->numeric()
+                    //->numeric()
                     ->sortable(),
             ])
 
@@ -59,7 +59,7 @@ class ParserItemsTable
                                 'price_min' => $item->price,
                             ]);
 
-                            $minPrice =  $item->price;
+                            $minPrice = floatval(preg_replace('/[^\d.]/', '', $item->price));
 
                             if ($response->failed()) {
                                 Notification::make()
@@ -75,8 +75,6 @@ class ParserItemsTable
                             dd($minPrice);
 
                             foreach ($data['products'] as $i) {
-
-
 
                                 Product::create([
                                     'title' => $i['title'] ?? null,
