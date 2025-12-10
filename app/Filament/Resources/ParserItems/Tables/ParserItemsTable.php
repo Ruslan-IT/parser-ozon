@@ -78,6 +78,7 @@ class ParserItemsTable
                                     'url'   => $i['url'] ?? null,
                                     'price' => $i['price'] ?? null,
                                     'delivery' => $i['delivery'] ?? null,
+                                    'sent_alert' => 0,
                                 ]);
                             }
                         }
