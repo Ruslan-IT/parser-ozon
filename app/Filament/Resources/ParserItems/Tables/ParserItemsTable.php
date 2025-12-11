@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ParserItems\Tables;
 
+use App\Http\Controllers\ProductAlertController;
 use App\Models\ParserItem;
 use App\Models\Product;
 use Filament\Actions\Action;
@@ -27,23 +28,17 @@ class ParserItemsTable
                     ->searchable()
                     ->toggleable(),
                     //>inlineEditable(), // Фильд редактируется прямо в таблице
-                TextInputColumn::make('url')
-                    ->label('Ссылка')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-                    //->textarea() // делает поле многострочным
-                    //->maxLength(500) // максимальная длина текста
+
 
                 TextColumn::make('price')
-                    ->label('Цена')
+                    ->label('Цена-мин')
                     //->numeric()
                     ->sortable(),
             ])
 
             ->headerActions([
                 Action::make('runAllParsers')
-                    ->label('Запустить парсер для всех моделей')
+                    ->label('Запустить парсера для всех моделей')
                     ->icon('heroicon-o-bolt')
                     ->color('primary')
                     ->requiresConfirmation()
@@ -78,7 +73,6 @@ class ParserItemsTable
 
                                 //dd($minPrice);
 
-
                                 Product::create([
                                     'title' => $i['title'] ?? null,
                                     'url'   => $i['url'] ?? null,
@@ -94,6 +88,10 @@ class ParserItemsTable
                             ->title('Парсинг всех моделей завершён!')
                             ->success()
                             ->send();
+
+                        //  сразу отправляем уведомления
+                        (new ProductAlertController)->sendAlerts();
+
                     }),
             ])
 

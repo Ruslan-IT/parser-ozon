@@ -22,20 +22,13 @@ class ParserItemForm
                     ->maxLength(255)
                     ->columnSpan('full'), // новая строка
 
-                Textarea::make('url')
-                    ->label('Ссылка')
-                    ->required()
-                    ->maxLength(1000)
-                    ->columnSpan('full') // новая строка и полностью видимое поле
 
-                    // если хочешь, чтобы автоматически показывался весь текст:
-                    ->rows(3), // высота textarea в 3 строки
 
                 TextInput::make('price')
-                    ->label('Цена')
+                    ->label('Цена-мин')
                     ->required()
                     ->numeric()
-                    ->columnSpan('full'), // новая строка
+                    ->columnSpan('full'), // новая строка samsung galaxy a35
             ]);
     }
 }

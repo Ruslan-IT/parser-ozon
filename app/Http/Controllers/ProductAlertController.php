@@ -20,6 +20,13 @@ class ProductAlertController extends Controller
 
         foreach ($products as $product) {
 
+            $days = $this->deliveryToDays($product->delivery);
+
+            // Отправляем только если доставка < 5 дней
+            if ($days > 2) {
+                continue;
+            }
+
             $text = "📉 *Цена снизилась!*\n"
                 . "Название: {$product->name}\n"
                 . "Цена: {$product->price}\n"
@@ -47,5 +54,49 @@ class ProductAlertController extends Controller
 
 
         return response()->json(['status' => 'ok']);
+    }
+
+
+
+    private function deliveryToDays(string $delivery): int
+    {
+        $delivery = trim(mb_strtolower($delivery));
+
+        // --- спец. случаи ---
+        if ($delivery === 'завтра') {
+            return 1;
+        }
+        if ($delivery === 'послезавтра') {
+            return 2;
+        }
+
+        // --- формат вида "16 декабря" ---
+        // пытаемся распарсить дату
+        $months = [
+            'января' => 1, 'февраля' => 2, 'марта' => 3, 'апреля' => 4,
+            'мая' => 5, 'июня' => 6, 'июля' => 7, 'августа' => 8,
+            'сентября' => 9, 'октября' => 10, 'ноября' => 11, 'декабря' => 12,
+        ];
+
+        if (preg_match('/(\d+)\s+([а-я]+)/u', $delivery, $m)) {
+
+            $day = (int)$m[1];
+            $month = $months[$m[2]] ?? null;
+
+            if ($month) {
+                $deliveryDate = \Carbon\Carbon::create(date('Y'), $month, $day);
+                $today = now();
+
+                // если дата уже прошла — значит про следующий год
+                if ($deliveryDate->isPast()) {
+                    $deliveryDate->addYear();
+                }
+
+                return $today->diffInDays($deliveryDate);
+            }
+        }
+
+        // 🤷 если формат незнакомый — считаем большим сроком
+        return 999;
     }
 }
