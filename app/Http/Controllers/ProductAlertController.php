@@ -63,16 +63,24 @@ class ProductAlertController extends Controller
     {
         $delivery = trim(mb_strtolower($delivery));
 
-        // --- спец. случаи ---
         if ($delivery === 'завтра') {
             return 1;
         }
+
         if ($delivery === 'послезавтра') {
             return 2;
         }
 
-        // --- формат вида "16 декабря" ---
-        // пытаемся распарсить дату
+        // "за X час/часа/часов" или "за  час" без числа
+        if (preg_match('/за\s*(\d*)\s*час/iu', $delivery, $m)) {
+
+            // если нет числа → считаем как 1
+            $hours = intval($m[1]) ?: 1;
+
+            return 1; // курьерская доставка = 1 день
+        }
+
+        // --- даты ---
         $months = [
             'января' => 1, 'февраля' => 2, 'марта' => 3, 'апреля' => 4,
             'мая' => 5, 'июня' => 6, 'июля' => 7, 'августа' => 8,
@@ -80,7 +88,6 @@ class ProductAlertController extends Controller
         ];
 
         if (preg_match('/(\d+)\s+([а-я]+)/u', $delivery, $m)) {
-
             $day = (int)$m[1];
             $month = $months[$m[2]] ?? null;
 
@@ -88,7 +95,6 @@ class ProductAlertController extends Controller
                 $deliveryDate = \Carbon\Carbon::create(date('Y'), $month, $day);
                 $today = now();
 
-                // если дата уже прошла — значит про следующий год
                 if ($deliveryDate->isPast()) {
                     $deliveryDate->addYear();
                 }
@@ -97,7 +103,6 @@ class ProductAlertController extends Controller
             }
         }
 
-        // 🤷 если формат незнакомый — считаем большим сроком
         return 999;
     }
 }
