@@ -23,7 +23,7 @@ class ProductAlertController extends Controller
             $days = $this->deliveryToDays($product->delivery);
 
             // Отправляем только если доставка < 5 дней
-            if ($days > 2) {
+            if ($days > 10) {
                 continue;
             }
 
