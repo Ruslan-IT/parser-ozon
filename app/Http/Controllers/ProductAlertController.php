@@ -23,7 +23,7 @@ class ProductAlertController extends Controller
             $days = $this->deliveryToDays($product->delivery);
 
             // Отправляем только если доставка < 5 дней
-            if ($days > 10) {
+            if ($days > 5) {
                 continue;
             }
 
@@ -31,6 +31,7 @@ class ProductAlertController extends Controller
                 . "Название: {$product->name}\n"
                 . "Цена: {$product->price}\n"
                 . "Мин. цена: {$product->min_price}\n"
+                . "Доставка: {$product->delivery}\n"
                 . "Ссылка: {$product->url}";
 
             /*foreach ($chatIds as $chatId) {
