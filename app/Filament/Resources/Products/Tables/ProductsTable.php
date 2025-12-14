@@ -32,10 +32,7 @@ class ProductsTable
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('title')
-                    ->label('Название')
-                    ->sortable()
-                    ->searchable(),
+
 
                 TextColumn::make('min_price')
                     ->label('Минимальная цена')
@@ -46,6 +43,10 @@ class ProductsTable
                     ->label('Дата / время')
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
+                TextColumn::make('title')
+                    ->label('Название')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([])
             ->toolbarActions([]);
