@@ -21,6 +21,7 @@ class ProductsTable
         //self::checkAndSendPrices();
 
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('price')
                     ->label('Цена')
@@ -32,8 +33,6 @@ class ProductsTable
                     ->sortable()
                     ->searchable(),
 
-
-
                 TextColumn::make('min_price')
                     ->label('Минимальная цена')
                     ->sortable()
@@ -43,6 +42,7 @@ class ProductsTable
                     ->label('Дата / время')
                     ->dateTime('d.m.Y H:i')
                     ->sortable(),
+
                 TextColumn::make('title')
                     ->label('Название')
                     ->sortable()
