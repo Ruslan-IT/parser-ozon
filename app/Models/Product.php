@@ -8,6 +8,8 @@ class Product extends Model
 {
     protected $fillable = ['title', 'url', 'price', 'min_price', 'delivery', 'sent_alert', 'query_title'];
 
+    public $timestamps = true;
+
     // Мутатор для автоматической очистки при установке цены
     public function setPriceAttribute($value)
     {

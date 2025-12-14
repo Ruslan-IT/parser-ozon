@@ -22,10 +22,30 @@ class ProductsTable
 
         return $table
             ->columns([
-                TextColumn::make('price')->label('Цена')->sortable()->searchable(),
-                TextColumn::make('delivery')->label('Доставка')->sortable()->searchable(),
-                TextColumn::make('title')->label('Название')->sortable()->searchable(),
-                TextColumn::make('min_price')->label('Минимальная цена')->sortable()->searchable(),
+                TextColumn::make('price')
+                    ->label('Цена')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('delivery')
+                    ->label('Доставка')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('title')
+                    ->label('Название')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('min_price')
+                    ->label('Минимальная цена')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('created_at')
+                    ->label('Дата / время')
+                    ->dateTime('d.m.Y H:i')
+                    ->sortable(),
             ])
             ->filters([])
             ->toolbarActions([]);
