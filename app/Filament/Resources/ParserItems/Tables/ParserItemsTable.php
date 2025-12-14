@@ -56,6 +56,7 @@ class ParserItemsTable
                             ]);
 
                             $minPrice = intval(preg_replace('/[^\d.]/', '', $item->price));
+                            $query_title = $item->name;
 
                             if ($response->failed()) {
                                 Notification::make()
@@ -78,6 +79,7 @@ class ParserItemsTable
                                     'url'   => $i['url'] ?? null,
                                     'price' => $i['price'] ?? null,
                                     'min_price' => $minPrice,
+                                    'query_title' => $query_title,
                                     'delivery' => $i['delivery'] ?? null,
                                     'sent_alert' => 0,
                                 ]);
