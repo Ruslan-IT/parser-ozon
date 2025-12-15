@@ -53,6 +53,7 @@ class ParserItemsTable
                                 'max_items' => 20,
                                 'price_min' => $item->price,
                                 'city' => 'Казань',
+                                'search_url' => 'https://www.ozon.ru/search/?brand=24565087&brand_was_predicted=true&deny_category_prediction=true&from_global=true&text=samsung&volumememoryphone=100956393',
                             ]);
 
                             $minPrice = intval(preg_replace('/[^\d.]/', '', $item->price));
