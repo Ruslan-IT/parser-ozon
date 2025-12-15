@@ -49,7 +49,7 @@ class ParserItemsTable
                         foreach ($items as $item) {
 
                             $response = Http::timeout(60)->post('http://155.212.219.85:5001/run-parser', [
-                                'query' => $item->name,
+                                'query' => 'https://www.ozon.ru/category/smartfony-15502/samsung-24565087/?brand_was_predicted=true&category_was_predicted=true&deny_category_prediction=true&from_global=true&text=samsung+galaxy+a16+4%2F128&volumememoryphone=100956392',
                                 'max_items' => 20,
                                 'price_min' => $item->price,
                                 'city' => 'Казань',
