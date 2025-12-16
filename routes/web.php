@@ -17,3 +17,9 @@ Route::get('/products/send-alerts', [ProductAlertController::class, 'sendAlerts'
 
 ///  usr/bin/php /home/i/info90zj/info90zj.beget.tech/artisan queue:work --queue=parsers --sleep=3 --stop-when-empty
 //                                info90zj.beget.tech/artisan queue:work --queue=parsers --sleep=3 --stop-when-empty
+
+// ssh root@155.212.219.85
+// *uMG9bOWsrlq
+// Ваш ID: 2489646, логин: info90zj, пароль: Arr2bGphmJWa
+
+//Arr2bGphmJWa
