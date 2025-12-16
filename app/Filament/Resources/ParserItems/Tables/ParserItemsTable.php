@@ -55,7 +55,7 @@ class ParserItemsTable
                             ->name('Парсинг моделей')
                             ->then(function () {
                                 // Все задачи выполнены
-                                SendTelegramAlertsJob::dispatch();
+                                //SendTelegramAlertsJob::dispatch();
 
                                 Notification::make()
                                     ->title('Парсинг завершён')
