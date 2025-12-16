@@ -49,11 +49,11 @@ class ParserItemsTable
                         foreach ($items as $item) {
 
                             $response = Http::timeout(60)->post('http://155.212.219.85:5001/run-parser', [
-                                'query' => $item->name,
+                                'query' => 'https://www.ozon.ru/search/?brand=24565087&brand_was_predicted=true&deny_category_prediction=true&from_global=true&text=samsung&volumememoryphone=100956393',
                                 'max_items' => 20,
                                 'price_min' => $item->price,
                                 'city' => 'Казань',
-                                'search_url' => 'https://www.ozon.ru/search/?brand=24565087&brand_was_predicted=true&deny_category_prediction=true&from_global=true&text=samsung&volumememoryphone=100956393',
+
                             ]);
 
                             $minPrice = intval(preg_replace('/[^\d.]/', '', $item->price));
