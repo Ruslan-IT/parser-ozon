@@ -15,6 +15,7 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextInputColumn;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 
 class ParserItemsTable
@@ -39,27 +40,43 @@ class ParserItemsTable
 
             ->headerActions([
                 Action::make('runAllParsers')
-                    ->label('Запустить парсера для всех моделей')
+                    ->label('Запустить парсер для всех моделей')
                     ->icon('heroicon-o-bolt')
                     ->color('primary')
                     ->requiresConfirmation()
                     ->action(function () {
 
-                        $items = ParserItem::all(); // все модели
+                        $items = ParserItem::all();
 
-                        foreach ($items as $item) {
-                            RunParserJob::dispatch($item->id)
-                                ->onQueue('parsers');
-                        }
+                        $jobs = $items->map(fn ($item) => new RunParserJob($item->id))->toArray();
+
+                        $batch = Bus::batch($jobs)
+                            ->name('Парсинг моделей')
+                            ->then(function () {
+                                // Все задачи выполнены
+                                (new ProductAlertController)->sendAlerts();
+
+                                Notification::make()
+                                    ->title('Парсинг завершён')
+                                    ->success()
+                                    ->send();
+                            })
+                            ->catch(function () {
+                                Notification::make()
+                                    ->title('Ошибка при парсинге')
+                                    ->danger()
+                                    ->send();
+                            })
+                            ->dispatch();
+
+                        // Сохраняем ID batch, если нужно для прогресса
+                        cache(['parser_batch_id' => $batch->id], now()->addHour());
 
                         Notification::make()
-                            ->title('Парсинг всех моделей завершён!')
+                            ->title('Парсинг запущен')
+                            ->body("Количество задач в очереди: {$batch->totalJobs}")
                             ->success()
                             ->send();
-
-                        //  сразу отправляем уведомления
-                        (new ProductAlertController)->sendAlerts();
-
                     }),
             ])
 
