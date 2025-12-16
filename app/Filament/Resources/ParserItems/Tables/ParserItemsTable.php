@@ -49,7 +49,7 @@ class ParserItemsTable
                         foreach ($items as $item) {
 
                             $response = Http::timeout(60)->post('http://155.212.219.85:5001/run-parser', [
-                                'query' => 'https://www.ozon.ru/search/?brand=24565087&brand_was_predicted=true&deny_category_prediction=true&from_global=true&text=samsung&volumememoryphone=100956393',
+                                'query' => $item->name,
                                 'max_items' => 20,
                                 'price_min' => $item->price,
                                 'city' => 'Казань',
@@ -70,8 +70,6 @@ class ParserItemsTable
 
                             // пример сохранения
                             $data = $response->json();
-
-                            dd($data);
 
 
                             foreach ($data['products'] as $i) {
