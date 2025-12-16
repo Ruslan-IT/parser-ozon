@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ParserItems\Tables;
 
 use App\Http\Controllers\ProductAlertController;
+use App\Jobs\RunParserJob;
 use App\Models\ParserItem;
 use App\Models\Product;
 use Filament\Actions\Action;
@@ -47,45 +48,8 @@ class ParserItemsTable
                         $items = ParserItem::all(); // все модели
 
                         foreach ($items as $item) {
-
-                            $response = Http::timeout(60)->post('http://155.212.219.85:5001/run-parser', [
-                                'query' => $item->name,
-                                'max_items' => 20,
-                                'price_min' => $item->price,
-                                'city' => 'Казань',
-
-                            ]);
-                            //dd($response->status(), $response->body());
-
-                            $minPrice = intval(preg_replace('/[^\d.]/', '', $item->price));
-                            $query_title = $item->name;
-
-                            if ($response->failed()) {
-                                Notification::make()
-                                    ->title("Ошибка при парсинге: {$item->name}")
-                                    ->danger()
-                                    ->send();
-                                continue;
-                            }
-
-                            // пример сохранения
-                            $data = $response->json();
-
-
-                            foreach ($data['products'] as $i) {
-
-                                //dd($minPrice);
-
-                                Product::create([
-                                    'title' => $i['title'] ?? null,
-                                    'url'   => $i['url'] ?? null,
-                                    'price' => $i['price'] ?? null,
-                                    'min_price' => $minPrice,
-                                    'query_title' => $query_title,
-                                    'delivery' => $i['delivery'] ?? null,
-                                    'sent_alert' => 0,
-                                ]);
-                            }
+                            RunParserJob::dispatch($item->id)
+                                ->onQueue('parsers');
                         }
 
                         Notification::make()
