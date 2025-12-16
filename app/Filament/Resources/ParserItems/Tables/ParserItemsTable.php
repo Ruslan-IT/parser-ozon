@@ -55,7 +55,7 @@ class ParserItemsTable
                                 'city' => 'Казань',
 
                             ]);
-                            dd($response->status(), $response->body());
+                            //dd($response->status(), $response->body());
 
                             $minPrice = intval(preg_replace('/[^\d.]/', '', $item->price));
                             $query_title = $item->name;
@@ -70,6 +70,8 @@ class ParserItemsTable
 
                             // пример сохранения
                             $data = $response->json();
+
+                            dd($data);
 
 
                             foreach ($data['products'] as $i) {
