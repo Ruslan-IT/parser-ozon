@@ -12,4 +12,8 @@ Route::get('/products/send-alerts', [ProductAlertController::class, 'sendAlerts'
 
 
 
-///usr/local/bin/php8.3 /home/info90zj/info90zj.beget.tech/artisan queue:work --queue=parsers --once
+///  usr/local/bin/php8.3 /home/info90zj/info90zj.beget.tech/artisan queue:work --queue=parsers --once
+
+
+///  usr/bin/php /home/i/info90zj/info90zj.beget.tech/artisan queue:work --queue=parsers --sleep=3 --stop-when-empty
+//                                info90zj.beget.tech/artisan queue:work --queue=parsers --sleep=3 --stop-when-empty
