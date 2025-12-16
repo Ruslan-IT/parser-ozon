@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ParserItems\Tables;
 
 use App\Http\Controllers\ProductAlertController;
 use App\Jobs\RunParserJob;
+use App\Jobs\SendTelegramAlertsJob;
 use App\Models\ParserItem;
 use App\Models\Product;
 use Filament\Actions\Action;
@@ -54,7 +55,7 @@ class ParserItemsTable
                             ->name('Парсинг моделей')
                             ->then(function () {
                                 // Все задачи выполнены
-                                (new ProductAlertController)->sendAlerts();
+                                SendTelegramAlertsJob::dispatch();
 
                                 Notification::make()
                                     ->title('Парсинг завершён')

@@ -12,3 +12,4 @@ Route::get('/products/send-alerts', [ProductAlertController::class, 'sendAlerts'
 
 
 
+///usr/local/bin/php8.3 /home/info90zj/info90zj.beget.tech/artisan queue:work --queue=parsers --once
