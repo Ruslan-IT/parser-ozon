@@ -50,7 +50,7 @@ class RunParserJob implements ShouldQueue
                 'max_items' => 20,
                 'price_min' => $item->price,
                 'name' => $item->name,
-                'city' => 'Казань',
+                'city' => $item->city,
             ]);
 
             Log::info('Parser response status', [
@@ -86,6 +86,7 @@ class RunParserJob implements ShouldQueue
                     'price' => $i['price'] ?? null,
                     'min_price' => $minPrice,
                     'query_title' => $item->name,
+                    'city' => $item->city,
                     'delivery' => $i['delivery'] ?? null,
                     'sent_alert' => 0,
                 ]);

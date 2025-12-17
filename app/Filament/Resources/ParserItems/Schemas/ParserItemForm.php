@@ -23,6 +23,14 @@ class ParserItemForm
                     ->maxLength(255)
                     ->columnSpan('full'),
 
+                 TextInput::make('city')
+                    ->label('Город')
+                    ->required()
+                    ->maxLength(255)
+                    ->columnSpan('full'),
+
+
+
                 TextInput::make('url')
                     ->label('Ссылка')
                     ->required()

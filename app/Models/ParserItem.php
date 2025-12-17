@@ -13,6 +13,7 @@ class ParserItem extends Model
         'name',
         'url',
         'price',
+        'city',
     ];
 }
 

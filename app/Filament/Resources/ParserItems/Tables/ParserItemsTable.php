@@ -30,6 +30,10 @@ class ParserItemsTable
                     ->label('Название')
                     ->sortable(),
 
+                TextColumn::make('city')
+                        ->label('Город')
+                        ->sortable(),
+
 
                 TextColumn::make('url')
                     ->label('Ссылка')
