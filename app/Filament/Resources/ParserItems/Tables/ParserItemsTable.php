@@ -45,7 +45,7 @@ class ParserItemsTable
                     ->sortable()
             ])
 
-            ->headerActions([
+            /*->headerActions([
                 Action::make('runAllParsers')
                     ->label('Запустить парсер для всех моделей')
                     ->icon('heroicon-o-bolt')
@@ -86,7 +86,7 @@ class ParserItemsTable
                             ->success()
                             ->send();
                     }),
-            ])
+            ])*/
 
             ->filters([
                 //

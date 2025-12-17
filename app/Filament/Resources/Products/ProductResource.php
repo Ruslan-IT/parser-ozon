@@ -29,6 +29,13 @@ class ProductResource extends Resource
     // 🔹 Множественное число (например, в хлебных крошках)
     protected static ?string $pluralModelLabel = 'Данные с парсера';
 
+
+
+    protected static bool $shouldRegisterNavigation = false;
+
+
+
+
     public static function form(Schema $schema): Schema
     {
         return ProductForm::configure($schema);
