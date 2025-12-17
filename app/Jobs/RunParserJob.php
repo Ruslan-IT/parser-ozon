@@ -46,7 +46,7 @@ class RunParserJob implements ShouldQueue
 
         try {
             $response = Http::timeout(60)->post('http://155.212.219.85:5001/run-parser', [
-                'query' => $item->name,
+                'query' => $item->url,
                 'max_items' => 20,
                 'price_min' => $item->price,
                 'city' => 'Казань',
@@ -78,6 +78,7 @@ class RunParserJob implements ShouldQueue
             foreach ($data['products'] ?? [] as $i) {
                 Product::create([
                     'title' => $i['title'] ?? null,
+                    'name' => $item->price ?? null,
                     'url' => $i['url'] ?? null,
                     'price' => $i['price'] ?? null,
                     'min_price' => $minPrice,

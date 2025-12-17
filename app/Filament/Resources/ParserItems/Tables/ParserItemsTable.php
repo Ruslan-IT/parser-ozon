@@ -25,8 +25,14 @@ class ParserItemsTable
     {
         return $table
             ->columns([
+
                 TextColumn::make('name')
-                    ->label('Марка')
+                    ->label('Название')
+                    ->sortable(),
+
+
+                TextColumn::make('url')
+                    ->label('Ссылка')
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
@@ -36,7 +42,7 @@ class ParserItemsTable
                 TextColumn::make('price')
                     ->label('Цена-мин')
                     //->numeric()
-                    ->sortable(),
+                    ->sortable()
             ])
 
             ->headerActions([
