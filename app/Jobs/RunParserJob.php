@@ -49,6 +49,7 @@ class RunParserJob implements ShouldQueue
                 'query' => $item->url,
                 'max_items' => 20,
                 'price_min' => $item->price,
+                'name' => $item->name,
                 'city' => 'Казань',
             ]);
 
