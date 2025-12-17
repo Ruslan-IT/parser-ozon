@@ -56,7 +56,7 @@ class ParserItemsTable
                             ->onQueue('parsers')
                             ->then(function () {
                                 // Все задачи выполнены
-                                SendTelegramAlertsJob::dispatch();
+                                //SendTelegramAlertsJob::dispatch();
 
                                 Notification::make()
                                     ->title('Парсинг завершён')
