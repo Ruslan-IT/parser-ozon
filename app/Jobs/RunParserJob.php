@@ -47,7 +47,7 @@ class RunParserJob implements ShouldQueue
         try {
             $response = Http::timeout(60)->post('http://155.212.219.85:5001/run-parser', [
                 'query' => $item->url,
-                'max_items' => 20,
+                'max_items' => 30,
                 'price_min' => $item->price,
                 'name' => $item->name,
                 'city' => $item->city,
