@@ -29,7 +29,7 @@ class ProductAlertController extends Controller
             }
 
             $text = "📉 *Цена снизилась!*\n"
-                . "Название-как в админке: {$product->name}\n"
+                . "Название как в админке: {$product->name}\n"
                 . "Название: {$product->title}\n"
                 . "Цена: {$product->price}\n"
                 . "Мин. цена: {$product->min_price}\n"
