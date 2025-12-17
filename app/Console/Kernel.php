@@ -2,13 +2,31 @@
 
 namespace App\Console;
 
-class Kernel
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
+class Kernel extends ConsoleKernel
 {
-    protected function schedule(\Illuminate\Console\Scheduling\Schedule $schedule): void
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
     {
-        $schedule->job(new \App\Jobs\ParseSmartphonesJob())->dailyAt('09:00');
-        $schedule->job(new \App\Jobs\ParseSmartphonesJob())->dailyAt('14:00');
-        $schedule->job(new \App\Jobs\ParseSmartphonesJob())->dailyAt('19:00');
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
     }
 
+    /**
+     * Define the application's command schedule.
+     *
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        // Здесь можно добавить расписание, если нужно
+    }
 }
