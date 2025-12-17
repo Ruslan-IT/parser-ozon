@@ -21,10 +21,14 @@ class RunParserJob implements ShouldQueue
     public $tries = 3;
     public $timeout = 180;
 
+    // Указываем конкретную очередь
+    public $queue = 'parsers';
+
+
     public function __construct(int $itemId)
     {
         $this->itemId = $itemId;
-        $this->onQueue('parsers');
+        //$this->onQueue('parsers');
     }
 
     public function handle(): void

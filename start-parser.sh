@@ -15,3 +15,4 @@ echo "=== Starting parser worker at $(date) ===" >> ~/parser-worker.log
 
 # Логируем завершение
 echo "=== Parser worker finished at $(date) ===" >> ~/parser-worker.log
+
