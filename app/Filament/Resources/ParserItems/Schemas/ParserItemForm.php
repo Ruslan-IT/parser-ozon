@@ -16,11 +16,18 @@ class ParserItemForm
     {
         return $schema
             ->components([
+
                 TextInput::make('name')
                     ->label('Название')
                     ->required()
                     ->maxLength(255)
-                    ->columnSpan('full'), // новая строка
+                    ->columnSpan('full'),
+
+                TextInput::make('url')
+                    ->label('Ссылка')
+                    ->required()
+                    ->maxLength(255)
+                    ->columnSpan('full'),
 
 
 
