@@ -11,7 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log; // Добавьте этот импорт
+use Illuminate\Support\Facades\Log;
 
 class RunParserJob implements ShouldQueue
 {
@@ -21,28 +21,24 @@ class RunParserJob implements ShouldQueue
     public $tries = 3;
     public $timeout = 180;
 
-    // Указываем конкретную очередь
-    public $queue = 'parsers';
-
-
     public function __construct(int $itemId)
     {
         $this->itemId = $itemId;
-        //$this->onQueue('parsers');
+        $this->onQueue('parsers'); // Устанавливаем очередь здесь
     }
 
     public function handle(): void
     {
-        Log::info('RunParserJob started', ['item_id' => $this->itemId]); // Логирование
+        Log::info('RunParserJob started', ['item_id' => $this->itemId]);
 
         $item = ParserItem::find($this->itemId);
 
         if (! $item) {
-            Log::error('ParserItem not found', ['item_id' => $this->itemId]); // Логирование
+            Log::error('ParserItem not found', ['item_id' => $this->itemId]);
             return;
         }
 
-        Log::info('Sending request to parser', [ // Логирование
+        Log::info('Sending request to parser', [
             'item_id' => $this->itemId,
             'name' => $item->name,
             'price' => $item->price
@@ -56,13 +52,13 @@ class RunParserJob implements ShouldQueue
                 'city' => 'Казань',
             ]);
 
-            Log::info('Parser response status', [ // Логирование
+            Log::info('Parser response status', [
                 'status' => $response->status(),
                 'item_id' => $this->itemId
             ]);
 
             if ($response->failed()) {
-                Log::error('Parser request failed', [ // Логирование
+                Log::error('Parser request failed', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                     'item_id' => $this->itemId
@@ -73,7 +69,7 @@ class RunParserJob implements ShouldQueue
             $minPrice = (int) preg_replace('/\D/', '', $item->price);
             $data = $response->json();
 
-            Log::info('Parsed products count', [ // Логирование
+            Log::info('Parsed products count', [
                 'count' => count($data['products'] ?? []),
                 'item_id' => $this->itemId
             ]);
@@ -92,13 +88,13 @@ class RunParserJob implements ShouldQueue
                 $createdCount++;
             }
 
-            Log::info('Products created', [ // Логирование
+            Log::info('Products created', [
                 'count' => $createdCount,
                 'item_id' => $this->itemId
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Parser job exception', [ // Логирование
+            Log::error('Parser job exception', [
                 'item_id' => $this->itemId,
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()

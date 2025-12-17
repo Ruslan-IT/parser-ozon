@@ -53,6 +53,7 @@ class ParserItemsTable
 
                         $batch = Bus::batch($jobs)
                             ->name('Парсинг моделей')
+                            ->onQueue('parsers')
                             ->then(function () {
                                 // Все задачи выполнены
                                 SendTelegramAlertsJob::dispatch();
