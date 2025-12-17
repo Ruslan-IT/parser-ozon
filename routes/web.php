@@ -26,3 +26,6 @@ Route::get('/products/send-alerts', [ProductAlertController::class, 'sendAlerts'
 // Ваш ID: 2489646, логин: info90zj, пароль: Arr2bGphmJWa
 
 //Arr2bGphmJWa
+
+
+#/usr/local/bin/php8.3 ~/info90zj.beget.tech/artisan parsers:run-all && /usr/local/bin/php8.3 ~/info90zj.beget.tech/artisan queue:work --queue=parsers --sleep=3 --stop-when-empty

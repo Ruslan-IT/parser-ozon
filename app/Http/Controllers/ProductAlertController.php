@@ -11,8 +11,8 @@ class ProductAlertController extends Controller
     {
         $token = env('TELEGRAM_BOT_TOKEN');
         //$chatIds = [env('TELEGRAM_CHAT_ID'), 955149250];
-        $chatIds = 955149250; //мой
-        //$chatIds = 1951908603; //Алексей
+        //$chatIds = 955149250; //мой
+        $chatIds = 1951908603; //Алексей
 
         // выбираем только товары, где price < min_price и уведомление ещё не отправлялось
         $products = Product::whereColumn('price', '<', 'min_price')
