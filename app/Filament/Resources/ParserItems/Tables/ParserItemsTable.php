@@ -55,8 +55,8 @@ class ParserItemsTable
                             ->name('Парсинг моделей')
                             ->onQueue('parsers')
                             ->then(function () {
-                                // Все задачи выполнены
-                                SendTelegramAlertsJob::dispatch();
+                                // Все задачи выполнены - отправляем уведомления в Telegram
+                                app(ProductAlertController::class)->sendAlerts();
 
                                 Notification::make()
                                     ->title('Парсинг завершён')
