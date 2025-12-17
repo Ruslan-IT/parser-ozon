@@ -39,231 +39,45 @@ class ParserItemsTable
             ])
 
             ->headerActions([
-                // Кнопка 1: Добавить задания в очередь (без запуска воркера)
-                Action::make('addToQueue')
-                    ->label('Добавить задания')
-                    ->icon('heroicon-o-plus-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading('Добавить задания в очередь')
-                    ->modalDescription('Задания будут добавлены в очередь для последующей обработки.')
-                    ->modalSubmitActionLabel('Добавить')
-                    ->action(function () {
-                        try {
-                            $items = ParserItem::all();
-
-                            if ($items->isEmpty()) {
-                                Notification::make()
-                                    ->title('Нет моделей для парсинга')
-                                    ->body('Сначала добавьте модели для парсинга.')
-                                    ->warning()
-                                    ->send();
-                                return;
-                            }
-
-                            $jobs = $items->map(fn ($item) => new RunParserJob($item->id))->toArray();
-
-                            $batch = Bus::batch($jobs)
-                                ->name('Парсинг моделей (ручной запуск)')
-                                ->onQueue('parsers')
-                                ->then(function () {
-                                    try {
-                                        app(ProductAlertController::class)->sendAlerts();
-                                    } catch (\Exception $e) {
-                                        Log::error('Ошибка отправки в Telegram: ' . $e->getMessage());
-                                    }
-
-                                    Notification::make()
-                                        ->title('Парсинг завершён')
-                                        ->success()
-                                        ->send();
-                                })
-                                ->catch(function ($batch, $e) {
-                                    Log::error('Ошибка при парсинге: ' . $e->getMessage());
-
-                                    Notification::make()
-                                        ->title('Ошибка при парсинге')
-                                        ->body($e->getMessage())
-                                        ->danger()
-                                        ->send();
-                                })
-                                ->dispatch();
-
-                            cache(['parser_batch_id' => $batch->id], now()->addHour());
-
-                            Notification::make()
-                                ->title('Задания добавлены в очередь')
-                                ->body("Добавлено {$batch->totalJobs} заданий. Для обработки запустите воркер или дождитесь автоматического запуска через Cron.")
-                                ->success()
-                                ->send();
-
-                        } catch (\Exception $e) {
-                            Log::error('Ошибка при добавлении заданий: ' . $e->getMessage());
-
-                            Notification::make()
-                                ->title('Ошибка')
-                                ->body($e->getMessage())
-                                ->danger()
-                                ->send();
-                        }
-                    }),
-
-                // Кнопка 2: Запустить воркер для обработки очереди
-                Action::make('startWorker')
-                    ->label('Запустить воркер')
-                    ->icon('heroicon-o-play')
+                Action::make('runAllParsers')
+                    ->label('Запустить парсер для всех моделей')
+                    ->icon('heroicon-o-bolt')
                     ->color('primary')
                     ->requiresConfirmation()
-                    ->modalHeading('Запустить воркер очереди')
-                    ->modalDescription('Запустит обработку заданий, которые уже есть в очереди.')
-                    ->modalSubmitActionLabel('Запустить')
                     ->action(function () {
-                        try {
-                            $jobCount = self::getJobCount();
 
-                            if ($jobCount === 0) {
+                        $items = ParserItem::all();
+
+                        $jobs = $items->map(fn ($item) => new RunParserJob($item->id))->toArray();
+
+                        $batch = Bus::batch($jobs)
+                            ->name('Парсинг моделей')
+                            ->onQueue('parsers')
+                            ->then(function () {
+                                // Все задачи выполнены - отправляем уведомления в Telegram
+                                app(ProductAlertController::class)->sendAlerts();
+
                                 Notification::make()
-                                    ->title('Очередь пуста')
-                                    ->body('Нет заданий для обработки. Сначала добавьте задания в очередь.')
-                                    ->warning()
-                                    ->send();
-                                return;
-                            }
-
-                            if (self::isWorkerRunning()) {
-                                Notification::make()
-                                    ->title('Воркер уже запущен')
-                                    ->body('Воркер уже работает и обрабатывает задания.')
-                                    ->info()
-                                    ->send();
-                                return;
-                            }
-
-                            $result = self::startBackgroundWorker();
-
-                            if ($result) {
-                                Notification::make()
-                                    ->title('Воркер запущен')
-                                    ->body("Начинаем обработку {$jobCount} заданий. Это может занять несколько минут.")
+                                    ->title('Парсинг завершён')
                                     ->success()
                                     ->send();
-                            } else {
+                            })
+                            ->catch(function () {
                                 Notification::make()
-                                    ->title('Не удалось запустить воркер')
-                                    ->body('Попробуйте запустить вручную через SSH или проверьте настройки сервера.')
+                                    ->title('Ошибка при парсинге')
                                     ->danger()
                                     ->send();
-                            }
+                            })
+                            ->dispatch();
 
-                        } catch (\Exception $e) {
-                            Log::error('Ошибка при запуске воркера: ' . $e->getMessage());
+                        // Сохраняем ID batch, если нужно для прогресса
+                        cache(['parser_batch_id' => $batch->id], now()->addHour());
 
-                            Notification::make()
-                                ->title('Ошибка')
-                                ->body($e->getMessage())
-                                ->danger()
-                                ->send();
-                        }
-                    }),
-
-                // Кнопка 3: Полный цикл (добавить задания + запустить воркер)
-                Action::make('runAllAndStartWorker')
-                    ->label('Запустить парсинг и обработку')
-                    ->icon('heroicon-o-bolt')
-                    ->color('warning')
-                    ->requiresConfirmation()
-                    ->modalHeading('Запустить полный цикл парсинга')
-                    ->modalDescription('Это добавит все задания в очередь и сразу начнет их обработку.')
-                    ->modalSubmitActionLabel('Запустить')
-                    ->action(function () {
-                        try {
-                            $items = ParserItem::all();
-
-                            if ($items->isEmpty()) {
-                                Notification::make()
-                                    ->title('Нет моделей для парсинга')
-                                    ->body('Сначала добавьте модели для парсинга в таблицу.')
-                                    ->warning()
-                                    ->send();
-                                return;
-                            }
-
-                            $jobs = $items->map(fn ($item) => new RunParserJob($item->id))->toArray();
-
-                            $batch = Bus::batch($jobs)
-                                ->name('Парсинг моделей (полный запуск)')
-                                ->onQueue('parsers')
-                                ->then(function () {
-                                    try {
-                                        app(ProductAlertController::class)->sendAlerts();
-                                    } catch (\Exception $e) {
-                                        Log::error('Ошибка отправки в Telegram: ' . $e->getMessage());
-                                    }
-
-                                    Notification::make()
-                                        ->title('Парсинг завершён')
-                                        ->body('Все задания выполнены, уведомления отправлены.')
-                                        ->success()
-                                        ->send();
-                                })
-                                ->catch(function ($batch, $e) {
-                                    Log::error('Ошибка при парсинге: ' . $e->getMessage());
-
-                                    Notification::make()
-                                        ->title('Ошибка при парсинге')
-                                        ->body($e->getMessage())
-                                        ->danger()
-                                        ->send();
-                                })
-                                ->dispatch();
-
-                            cache(['parser_batch_id' => $batch->id], now()->addHour());
-
-                            if (self::isWorkerRunning()) {
-                                Notification::make()
-                                    ->title('Задания добавлены, воркер уже работает')
-                                    ->body("Добавлено {$batch->totalJobs} заданий. Воркер уже запущен и начнет их обработку.")
-                                    ->info()
-                                    ->send();
-                                return;
-                            }
-
-                            $workerStarted = self::startBackgroundWorker();
-
-                            if ($workerStarted) {
-                                Notification::make()
-                                    ->title('Парсинг запущен')
-                                    ->body("Добавлено {$batch->totalJobs} заданий. Обработка началась и займет несколько минут.")
-                                    ->success()
-                                    ->send();
-
-                                Log::info("Полный цикл парсинга запущен", [
-                                    'batch_id' => $batch->id,
-                                    'jobs_count' => $batch->totalJobs,
-                                    'worker_started' => true
-                                ]);
-                            } else {
-                                Notification::make()
-                                    ->title('Задания добавлены, но воркер не запущен')
-                                    ->body("Добавлено {$batch->totalJobs} заданий. Воркер не удалось запустить автоматически. Задания будут обработаны при следующем запуске Cron.")
-                                    ->warning()
-                                    ->send();
-
-                                Log::warning("Задания добавлены, но воркер не запущен", [
-                                    'batch_id' => $batch->id,
-                                    'jobs_count' => $batch->totalJobs
-                                ]);
-                            }
-
-                        } catch (\Exception $e) {
-                            Log::error('Ошибка при полном запуске парсинга: ' . $e->getMessage());
-
-                            Notification::make()
-                                ->title('Ошибка')
-                                ->body('Произошла ошибка: ' . $e->getMessage())
-                                ->danger()
-                                ->send();
-                        }
+                        Notification::make()
+                            ->title('Парсинг запущен')
+                            ->body("Количество задач в очереди: {$batch->totalJobs}")
+                            ->success()
+                            ->send();
                     }),
             ])
 
