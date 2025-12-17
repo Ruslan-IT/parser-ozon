@@ -67,6 +67,8 @@ class RunParserJob implements ShouldQueue
             }
 
             $minPrice = (int) preg_replace('/\D/', '', $item->price);
+            $name = $item->name;
+
             $data = $response->json();
 
             Log::info('Parsed products count', [
@@ -78,7 +80,7 @@ class RunParserJob implements ShouldQueue
             foreach ($data['products'] ?? [] as $i) {
                 Product::create([
                     'title' => $i['title'] ?? null,
-                    'name' => $item->price ?? null,
+                    'name' => $name ?? null,
                     'url' => $i['url'] ?? null,
                     'price' => $i['price'] ?? null,
                     'min_price' => $minPrice,
