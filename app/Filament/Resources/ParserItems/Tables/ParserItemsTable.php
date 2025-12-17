@@ -39,45 +39,33 @@ class ParserItemsTable
             ])
 
             ->headerActions([
-                Action::make('runAllParsers')
-                    ->label('Запустить парсер для всех моделей')
-                    ->icon('heroicon-o-bolt')
-                    ->color('primary')
+                Action::make('runParsersNow')
+                    ->label('▶ Запустить парсер сейчас')
+                    ->color('danger')
+                    ->icon('heroicon-o-play')
                     ->requiresConfirmation()
                     ->action(function () {
 
-                        $items = ParserItem::all();
+                        $script = '/bin/bash /home/i/info90zj/info90zj.beget.tech/run_parsers_cron.sh';
 
-                        $jobs = $items->map(fn ($item) => new RunParserJob($item->id))->toArray();
+                        $output = [];
+                        $code = 0;
 
-                        $batch = Bus::batch($jobs)
-                            ->name('Парсинг моделей')
-                            ->onQueue('parsers')
-                            ->then(function () {
-                                // Все задачи выполнены - отправляем уведомления в Telegram
-                                app(ProductAlertController::class)->sendAlerts();
+                        exec($script . ' 2>&1', $output, $code);
 
-                                Notification::make()
-                                    ->title('Парсинг завершён')
-                                    ->success()
-                                    ->send();
-                            })
-                            ->catch(function () {
-                                Notification::make()
-                                    ->title('Ошибка при парсинге')
-                                    ->danger()
-                                    ->send();
-                            })
-                            ->dispatch();
-
-                        // Сохраняем ID batch, если нужно для прогресса
-                        cache(['parser_batch_id' => $batch->id], now()->addHour());
-
-                        Notification::make()
-                            ->title('Парсинг запущен')
-                            ->body("Количество задач в очереди: {$batch->totalJobs}")
-                            ->success()
-                            ->send();
+                        if ($code === 0) {
+                            Notification::make()
+                                ->title('Парсер запущен')
+                                ->body('Скрипт успешно стартовал')
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Ошибка запуска парсера')
+                                ->body(implode("\n", $output))
+                                ->danger()
+                                ->send();
+                        }
                     }),
             ])
 
