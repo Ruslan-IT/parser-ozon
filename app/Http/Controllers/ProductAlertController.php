@@ -24,9 +24,9 @@ class ProductAlertController extends Controller
             $days = $this->deliveryToDays($product->delivery);
 
             // Отправляем только если доставка < 5 дней
-            if ($days > 5) {
+           /* if ($days > 5) {
                 continue;
-            }
+            }*/
 
             $text = "📉 *Цена снизилась!*\n"
                 . "Название как в админке: {$product->name}\n"
